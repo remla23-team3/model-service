@@ -52,9 +52,13 @@ def predict():
     """
 
     raw_data = request.get_json()
-    restaurant_review = prepare(raw_data)
-    prediction = model.predict(restaurant_review)
+    data, review_content = prepare(raw_data)
+    prediction = model.predict(data)
     
     return {
-        'prediction': prediction,
+        'content': review_content,
+        'sentiment': prediction
     }
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=6789)
