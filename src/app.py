@@ -1,9 +1,7 @@
 from flask import Flask, request
 from flasgger import Swagger
 
-# TODO: fetch model from `model-training` repository.
-from sentiment_analysis.model import model
-from sentiment_analysis.preprocess import prepare
+from model_training.predicting import predict_single_review
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -51,9 +49,10 @@ def predict():
               example: "Invalid request."
     """
 
-    raw_data = request.get_json()
-    data, review_content = prepare(raw_data)
-    prediction = model.predict(data)
+    review_data = request.get_json()
+    review_content = review_data['content']
+
+    prediction = predict_single_review(review_content)
     
     return {
         'content': review_content,
