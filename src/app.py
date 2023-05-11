@@ -1,10 +1,27 @@
 from flask import Flask, request
 from flasgger import Swagger
+from markdown import markdown
+from pygments.formatters import HtmlFormatter
 
 from model_training.predicting import predict_single_review
 
 app = Flask(__name__)
 swagger = Swagger(app)
+
+# create a route for the app at "/" that serves the content from the README.md file
+@app.route('/')
+def home():
+    """
+    Home endpoint.
+    ---
+    responses:
+      200:
+        description: README.md content.
+    """
+    readme_content = open("README.md", "r").read()
+    page_content = markdown(readme_content, extensions=['fenced_code'])
+
+    return page_content
 
 @app.route('/predict', methods=['POST'])
 def predict():
