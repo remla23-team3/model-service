@@ -1,0 +1,3 @@
+Flask==2.2.4
+flasgger==0.9.5
+model_training @ git+https://github.com/remla23-team3/model-training@main
