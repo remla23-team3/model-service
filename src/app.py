@@ -1,11 +1,36 @@
 from flasgger import Swagger
 from flask import Flask, request
+import urllib.request
+import pickle
+import joblib
 
 from model_training.src.models.predict_model import predict_single
 
 
 app = Flask(__name__)
 swagger = Swagger(app)
+
+
+def download_models():
+    # google drive auto-downloadable link
+    classifier_URL = 'https://drive.google.com/uc?export=download&id=1Jxnu5e0eiv6RAgdGnHZton5IMv2wyHTn'
+    bow_URL ='https://drive.google.com/uc?export=download&id=12j3aHN8336FGhceGPoKv1wS2lIE3s_HH'
+
+    cv_path, proba = urllib.request.urlretrieve(bow_URL,
+                                                 filename="c1_BoW_Sentiment_Model.pkl")
+    classifier_path, proba = urllib.request.urlretrieve(classifier_URL,
+                                                 filename="c2_Classifier_Sentiment_Model")
+    print(cv_path)
+    print(classifier_path)
+
+    with open(cv_path, 'rb') as f:
+        cv = pickle.load(f)
+
+    classifier = joblib.load(classifier_path)
+
+    return cv, classifier
+
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -49,11 +74,13 @@ def predict():
               type: string
               example: "Invalid request."
     """
+    cv, classifier = download_models()
+
 
     review_data = request.get_json()
     review_content = review_data['content']
 
-    prediction = predict_single(review_content)
+    prediction = predict_single(review_content, classifier, cv)
     
     return {
         'content': review_content,
