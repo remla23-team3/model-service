@@ -1,7 +1,8 @@
-from flask import Flask, request
 from flasgger import Swagger
+from flask import Flask, request
 
-from model_training.predicting import predict_single_review
+from model_training.src.models.predict_model import predict_single
+
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -52,7 +53,7 @@ def predict():
     review_data = request.get_json()
     review_content = review_data['content']
 
-    prediction = predict_single_review(review_content)
+    prediction = predict_single(review_content)
     
     return {
         'content': review_content,
