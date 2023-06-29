@@ -17,6 +17,8 @@ build/
 .idea/
 docs/_build/
 .vscode
+src/c1_BoW_Sentiment_Model.pkl
+src/c2_Classifier_Sentiment_Model
 
 # Coverage reports
 htmlcov/
